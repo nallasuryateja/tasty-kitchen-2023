@@ -1,132 +1,50 @@
+import {Component} from 'react'
 import {Link, withRouter} from 'react-router-dom'
-
-import {GiHamburgerMenu} from 'react-icons/gi'
-import {AiOutlineCloseCircle} from 'react-icons/ai'
-
-import Cookies from 'js-cookie'
-
-import Popup from 'reactjs-popup'
-
-import CartContext from '../../context/CartContext'
 
 import './index.css'
 
-const Header = props => {
-  const onClickLogout = () => {
-    const {history} = props
-    Cookies.remove('jwt_token')
-    history.replace('/login')
+class Header extends Component {
+  state = {
+    searchInput: '',
   }
 
-  const getColor = current => {
-    const {history} = props
-    if (history.location.pathname === current) {
-      // console.log(history.location.pathname)
-      return '#f7931e'
-    }
-    return '#334155'
+  onChangeInput = event => {
+    this.setState({searchInput: event.target.value})
   }
 
-  const renderCartItemsCount = () => (
-    <CartContext.Consumer>
-      {value => {
-        const {cartList} = value
-        const cartItemsCount = cartList.length
-        console.log(cartList)
+  render() {
+    const {searchInput} = this.state
+    return (
+      <nav className="nav-header">
+        <div className="nav-bar-large-container">
+          <div className="icon-container">
+            <Link to="/" className="nav-link">
+              <h1 className="icon-heading">MovieDb</h1>
+            </Link>
+          </div>
 
-        return (
-          <>
-            {cartItemsCount > 0 && (
-              <span className="cart-count-badge">{cartList.length}</span>
-            )}
-          </>
-        )
-      }}
-    </CartContext.Consumer>
-  )
+          <ul className="nav-menu">
+            <Link to="/" className="nav-link">
+              <li className="nav-menu-item">Home</li>
+            </Link>
 
-  return (
-    <nav className="nav-header">
-      <div className="nav-bar-large-container">
-        <div className="icon-container">
-          <Link to="/" className="nav-link">
-            <img
-              className="website-logo"
-              src="https://res.cloudinary.com/dkobk5oao/image/upload/v1633608363/Frame_274_mqin4h.png"
-              alt="website logo"
-            />
-          </Link>
-          <h1 className="icon-heading">Tasty Kitchens</h1>
+            <Link to="/top-rated" className="nav-link">
+              <li className="nav-menu-item">Top Rated</li>
+            </Link>
+            <Link to="/up-coming" className="nav-link">
+              <li className="nav-menu-item">Upcoming</li>
+            </Link>
+          </ul>
+          <input
+            value={searchInput}
+            type="search"
+            onChange={this.onChangeInput}
+          />
+          <button type="button">Search</button>
         </div>
-
-        <ul className="nav-menu">
-          <Link to="/" className="nav-link">
-            <li className="nav-menu-item" style={{color: getColor('/')}}>
-              Home
-            </li>
-          </Link>
-
-          <Link to="/cart" className="nav-link">
-            <li className="nav-menu-item" style={{color: getColor('/cart')}}>
-              Cart
-              {renderCartItemsCount()}
-            </li>
-          </Link>
-          <li>
-            <button
-              type="button"
-              className="logout-desktop-btn"
-              onClick={onClickLogout}
-            >
-              Logout
-            </button>
-          </li>
-        </ul>
-        <div className="popup-cont">
-          <Popup
-            modal
-            trigger={
-              <button type="button" className="hamburger-btn">
-                <GiHamburgerMenu size={25} className="hamburger" />
-              </button>
-            }
-            position="top left"
-          >
-            {close => (
-              <div className="modal-container">
-                <div className="nav-link-container">
-                  <Link to="/" className="nav-link">
-                    <p className="nav-menu-item" style={{color: getColor('/')}}>
-                      Home
-                    </p>
-                  </Link>
-                  <Link to="/cart" className="nav-link">
-                    <p
-                      className="nav-menu-item"
-                      style={{color: getColor('/cart')}}
-                    >
-                      Cart
-                      {renderCartItemsCount()}
-                    </p>
-                  </Link>
-                  <button
-                    type="button"
-                    className="logout-desktop-btn"
-                    onClick={onClickLogout}
-                  >
-                    Logout
-                  </button>
-                </div>
-                <button type="button" className="close-btn">
-                  <AiOutlineCloseCircle size={18} onClick={() => close()} />
-                </button>
-              </div>
-            )}
-          </Popup>
-        </div>
-      </div>
-    </nav>
-  )
+      </nav>
+    )
+  }
 }
 
 export default withRouter(Header)
